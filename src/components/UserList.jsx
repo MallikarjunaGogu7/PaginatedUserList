@@ -38,6 +38,31 @@ const UserList = () => {
     }
   };
 
+  // Handle page number click
+  const goToPage = (pageNumber) => {
+    setCurrentPage(pageNumber);
+  };
+
+  // Calculate the range of page numbers to display
+  const totalPages = Math.ceil(users.length / usersPerPage);
+  const getPageNumbers = () => {
+    const pageNumbers = [];
+    let startPage = Math.max(1, currentPage - 1);
+    let endPage = Math.min(totalPages, currentPage + 1);
+
+    if (currentPage <= 2) {
+      endPage = Math.min(3, totalPages);
+    } else if (currentPage >= totalPages - 1) {
+      startPage = Math.max(totalPages - 2, 1);
+    }
+
+    for (let i = startPage; i <= endPage; i++) {
+      pageNumbers.push(i);
+    }
+
+    return pageNumbers;
+  };
+
   return (
     <div>
       <h1 className='user-list-heading'>User List</h1>
@@ -56,16 +81,25 @@ const UserList = () => {
         <button onClick={prevPage} disabled={currentPage === 1}>
           Previous
         </button>
+        {getPageNumbers().map((pageNumber) => (
+          <button
+            key={pageNumber}
+            onClick={() => goToPage(pageNumber)}
+            disabled={currentPage === pageNumber}
+          >
+            {pageNumber}
+          </button>
+        ))}
         <button
           onClick={nextPage}
-          disabled={currentPage === Math.ceil(users.length / usersPerPage)}
+          disabled={currentPage === totalPages}
         >
           Next
         </button>
       </div>
       <div className="pagecount-container">
         <div className="pagecount">
-            <span>Page {currentPage}</span>
+          <span>Page {currentPage} of {totalPages}</span>
         </div>
       </div>
     </div>
